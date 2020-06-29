@@ -30,17 +30,21 @@ class LinearClassifier(object):
     Outputs:
     A list containing the value of the loss function at each training iteration.
     """
-    num_train, dim = X.shape
-    num_classes = np.max(y) + 1 # assume y takes values 0...K-1 where K is number of classes
+        num_train, dim = X.shape
+    num_classes = np.max(y) + 1
+    # assume y takes values 0...K-1 where K is number of classes
     if self.W is None:
       # lazily initialize W
       self.W = 0.001 * np.random.randn(dim, num_classes)
 
     # Run stochastic gradient descent to optimize W
     loss_history = []
-    for it in xrange(num_iters):
+    for it in range(num_iters):
       X_batch = None
       y_batch = None
+      batch_mask = np.random.choice(num_train, batch_size)
+      X_batch = X[batch_mask, :]
+      y_batch = y[batch_mask]
 
       #########################################################################
       # TODO:                                                                 #
@@ -61,7 +65,7 @@ class LinearClassifier(object):
       # evaluate loss and gradient
       loss, grad = self.loss(X_batch, y_batch, reg)
       loss_history.append(loss)
-
+      self.W = self.W - learning_rate*grad
       # perform parameter update
       #########################################################################
       # TODO:                                                                 #
